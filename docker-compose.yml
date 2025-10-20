@@ -1,0 +1,40 @@
+name: r3-statistics
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:25.2-alpine
+    restart: always
+    ports:
+      - "39000:9000"   # Native client interface
+      - "38123:8123"   # HTTP interface
+    env_file:
+      - .env
+    volumes:
+      # use definition from env file
+      - ./_data:/var/lib/clickhouse
+    healthcheck:
+      test: ["CMD-SHELL", "clickhouse-client --query 'SELECT 1'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - r3stats-network
+    environment:
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+
+  r3-statistics:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - CLICKHOUSE_URL=http://clickhouse:8123
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    networks:
+      - r3stats-network
+
+networks:
+  r3stats-network:
