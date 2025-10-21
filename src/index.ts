@@ -140,7 +140,9 @@ const fetchAndInsertStats = async () => {
         format: 'JSONEachRow',
     });
 
-    console.log('Inserted stats:', res.summary);
+    if (!res.executed) {
+        console.error('Failed to insert stats into ClickHouse.', res);
+    }
 };
 
 const main = async () => {
