@@ -10,6 +10,8 @@ const client = createClient({
 
 const statsUrl = 'https://realraum.at/status.json';
 
+const intervalMs = 10 * 1000; // 10 seconds
+
 const migrations = [
     {
         id: 'create_json_table',
@@ -40,6 +42,13 @@ const migrations = [
             SETTINGS index_granularity = 8192;
         `,
     },
+    {
+        id: 'add_ttl_to_table',
+        sql: `
+            ALTER TABLE r3stats.stats
+            MODIFY TTL toDateTime(timestamp) + INTERVAL 1 YEAR;
+        `,
+    }
 ];
 
 const initializeMetadataTable = async () => {
@@ -106,11 +115,18 @@ const setupDatabase = async () => {
 };
 
 const fetchStats = async (): Promise<object | null> => {
+    const abortController = new AbortController();
+
+    setTimeout(() => {
+        abortController.abort();
+    }, intervalMs / 2);
+
     try {
         const response = await fetch(statsUrl, {
             headers: {
                 'User-Agent': 'r3stats-clickhouse-logger/1.0',
             },
+            signal: abortController.signal,
         });
 
         if (!response.ok) {
@@ -119,6 +135,18 @@ const fetchStats = async (): Promise<object | null> => {
 
         return await response.json() as object;
     } catch (error) {
+        // if ETIMEDOUT, skip logging
+        if (error instanceof Error && (error as any).code === 'ETIMEDOUT') {
+            console.warn('Fetch stats request timed out, skipping this interval.');
+            return null;
+        }
+
+        // also do not log abort errors
+        if (error instanceof Error && error.name === 'AbortError') {
+            console.warn('Fetch stats request aborted due to timeout, skipping this interval.');
+            return null;
+        }
+
         console.error('Error fetching stats:', error);
         return null;
     }
@@ -152,7 +180,7 @@ const main = async () => {
     // execute every 10 seconds
     setInterval(async () => {
         await fetchAndInsertStats();
-    }, 10 * 1000);
+    }, intervalMs);
 };
 
 main().catch((error) => {
