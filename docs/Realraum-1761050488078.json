@@ -1,0 +1,1657 @@
+{
+    "__inputs": [
+        {
+            "name": "DS_R3STATS-CLICKHOUSE",
+            "label": "r3stats-clickhouse",
+            "description": "",
+            "type": "datasource",
+            "pluginId": "grafana-clickhouse-datasource",
+            "pluginName": "ClickHouse"
+        }
+    ],
+    "__elements": {},
+    "__requires": [
+        {
+            "type": "panel",
+            "id": "dalvany-image-panel",
+            "name": "Dynamic image panel",
+            "version": "4.0.0"
+        },
+        {
+            "type": "grafana",
+            "id": "grafana",
+            "name": "Grafana",
+            "version": "12.1.0"
+        },
+        {
+            "type": "datasource",
+            "id": "grafana-clickhouse-datasource",
+            "name": "ClickHouse",
+            "version": "4.11.1"
+        },
+        {
+            "type": "panel",
+            "id": "stat",
+            "name": "Stat",
+            "version": ""
+        },
+        {
+            "type": "panel",
+            "id": "state-timeline",
+            "name": "State timeline",
+            "version": ""
+        },
+        {
+            "type": "panel",
+            "id": "timeseries",
+            "name": "Time series",
+            "version": ""
+        }
+    ],
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "target": {
+                    "limit": 100,
+                    "matchAny": false,
+                    "tags": [],
+                    "type": "dashboard"
+                },
+                "type": "dashboard"
+            }
+        ]
+    },
+    "description": "A dashboard to monitor the realraum hackerspace",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "id": null,
+    "links": [],
+    "liveNow": true,
+    "panels": [
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 2,
+            "panels": [],
+            "title": "Overview",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "${ds}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "dark-red",
+                                "value": 0
+                            },
+                            {
+                                "color": "dark-yellow",
+                                "value": 70
+                            },
+                            {
+                                "color": "dark-green",
+                                "value": 100
+                            }
+                        ]
+                    },
+                    "unit": "Members"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 8,
+                "x": 0,
+                "y": 1
+            },
+            "id": 4,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "database": "realraum",
+                    "datasource": {
+                        "type": "grafana-clickhouse-datasource",
+                        "uid": "${DS_R3STATS-CLICKHOUSE}"
+                    },
+                    "dateColDataType": "",
+                    "dateLoading": false,
+                    "dateTimeColDataType": "timestamp",
+                    "dateTimeType": "DATETIME64",
+                    "datetimeLoading": false,
+                    "editorType": "sql",
+                    "extrapolate": true,
+                    "format": 0,
+                    "intervalFactor": 1,
+                    "meta": {},
+                    "pluginVersion": "4.11.1",
+                    "queryType": "timeseries",
+                    "rawSql": "SELECT\n  timestamp as t,\n  any(total_member_count) as `Members`\nFROM\n  stats\nWHERE\n  $__timeFilter(t)\nGROUP BY\n  t\nORDER BY\n  t",
+                    "refId": "A",
+                    "round": "0s",
+                    "skip_comments": true,
+                    "table": "stats",
+                    "tableLoading": false
+                }
+            ],
+            "title": "Members",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "${ds}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [
+                        {
+                            "options": {
+                                "match": "true",
+                                "result": {
+                                    "color": "dark-green",
+                                    "index": 0,
+                                    "text": "Open"
+                                }
+                            },
+                            "type": "special"
+                        },
+                        {
+                            "options": {
+                                "match": "false",
+                                "result": {
+                                    "color": "dark-red",
+                                    "index": 1,
+                                    "text": "Closed"
+                                }
+                            },
+                            "type": "special"
+                        }
+                    ],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "text",
+                                "value": 0
+                            }
+                        ]
+                    },
+                    "unit": "string"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 5,
+                "x": 8,
+                "y": 1
+            },
+            "id": 7,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "/^State$/",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "database": "realraum",
+                    "datasource": {
+                        "type": "grafana-clickhouse-datasource",
+                        "uid": "${DS_R3STATS-CLICKHOUSE}"
+                    },
+                    "dateColDataType": "",
+                    "dateLoading": false,
+                    "dateTimeColDataType": "timestamp",
+                    "dateTimeType": "DATETIME64",
+                    "datetimeLoading": false,
+                    "editorType": "sql",
+                    "extrapolate": false,
+                    "format": 0,
+                    "hide": false,
+                    "intervalFactor": 1,
+                    "meta": {},
+                    "pluginVersion": "4.11.1",
+                    "queryType": "timeseries",
+                    "rawSql": "SELECT\n    timestamp as t,\n    any(state_open) as `State`\nFROM stats\n\nWHERE $__timeFilter(t)\n\nGROUP BY t\n\nORDER BY t\n",
+                    "refId": "A",
+                    "round": "0s",
+                    "skip_comments": true,
+                    "table": "stats",
+                    "tableLoading": false
+                }
+            ],
+            "title": "realraum Status",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "${ds}"
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 4,
+                "x": 13,
+                "y": 1
+            },
+            "id": 82,
+            "options": {
+                "alt_field": "",
+                "autofit": false,
+                "height": "75",
+                "icon_field": "",
+                "open_url": {
+                    "base_url": "",
+                    "enable": false,
+                    "metric_field": "",
+                    "open_in_tab": true,
+                    "suffix": ""
+                },
+                "overlay": {
+                    "bindings": {
+                        "bindings": [],
+                        "has_text": true,
+                        "unbounded": "#66666620"
+                    },
+                    "field": "",
+                    "height": {
+                        "size": 5,
+                        "unit": "%"
+                    },
+                    "position": "Top right",
+                    "width": {
+                        "size": 5,
+                        "unit": "%"
+                    }
+                },
+                "shared_cross_hair": {
+                    "backgroundColor": "#FFFFFF10",
+                    "borderColor": "#FFFFFF20"
+                },
+                "singleFill": true,
+                "slideshow": {
+                    "duration": 5000,
+                    "enable": false,
+                    "infinite": true,
+                    "pauseOnHover": true,
+                    "transition": "Slide",
+                    "transition_duration": 1000
+                },
+                "tooltip": false,
+                "tooltip_date_elapsed": false,
+                "tooltip_field": "",
+                "tooltip_include_date": false,
+                "tooltip_include_field": true,
+                "underline": {
+                    "bindings": {
+                        "bindings": [],
+                        "has_text": true,
+                        "unbounded": "#CCCCDCFF"
+                    },
+                    "bindings_field": "",
+                    "field": "",
+                    "text_align": "left",
+                    "text_size": "14"
+                },
+                "width": "75"
+            },
+            "pluginVersion": "4.0.0",
+            "targets": [
+                {
+                    "builderOptions": {
+                        "aggregates": [],
+                        "columns": [
+                            {
+                                "alias": "json",
+                                "custom": false,
+                                "name": "json",
+                                "type": "String"
+                            }
+                        ],
+                        "database": "r3stats",
+                        "filters": [],
+                        "groupBy": [],
+                        "limit": 1,
+                        "meta": {},
+                        "mode": "list",
+                        "orderBy": [],
+                        "queryType": "table",
+                        "table": "stats"
+                    },
+                    "datasource": {
+                        "type": "grafana-clickhouse-datasource",
+                        "uid": "${DS_R3STATS-CLICKHOUSE}"
+                    },
+                    "editorType": "sql",
+                    "format": 0,
+                    "meta": {
+                        "builderOptions": {
+                            "aggregates": [],
+                            "columns": [
+                                {
+                                    "alias": "json",
+                                    "custom": false,
+                                    "name": "json",
+                                    "type": "String"
+                                }
+                            ],
+                            "database": "r3stats",
+                            "filters": [],
+                            "groupBy": [],
+                            "limit": 1,
+                            "meta": {},
+                            "mode": "list",
+                            "orderBy": [],
+                            "queryType": "table",
+                            "table": "stats"
+                        }
+                    },
+                    "pluginVersion": "4.11.1",
+                    "queryType": "timeseries",
+                    "rawSql": "WITH\n  JSONExtractRaw(any(json), 'state') as state,\n  JSONExtractRaw(state, 'icon') as icon\nSELECT\n  JSONExtractBool(state, 'open') ? JSONExtractString(icon, 'open') : JSONExtractString(icon, 'closed') as url,\n  timestamp as t\nFROM\n  stats\nWHERE $__timeFilter(t)\nGROUP BY t\nORDER BY t desc\nLIMIT 1\n",
+                    "refId": "A"
+                }
+            ],
+            "type": "dalvany-image-panel"
+        },
+        {
+            "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "${ds}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "text",
+                                "value": 0
+                            }
+                        ]
+                    },
+                    "unit": "dateTimeFromNow"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 2,
+                "w": 7,
+                "x": 17,
+                "y": 1
+            },
+            "id": 9,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "database": "realraum",
+                    "datasource": {
+                        "type": "grafana-clickhouse-datasource",
+                        "uid": "${DS_R3STATS-CLICKHOUSE}"
+                    },
+                    "dateColDataType": "",
+                    "dateLoading": false,
+                    "dateTimeColDataType": "timestamp",
+                    "dateTimeType": "DATETIME64",
+                    "datetimeLoading": false,
+                    "editorType": "sql",
+                    "extrapolate": false,
+                    "format": 0,
+                    "intervalFactor": 1,
+                    "meta": {},
+                    "pluginVersion": "4.11.1",
+                    "queryType": "timeseries",
+                    "rawSql": "SELECT\n    timestamp as t,\n    toUInt64(any(state_lastchange)) * 1000 as `Last Change` -- grafana and everything is shit (timezones)\nFROM stats\n\nWHERE $__timeFilter(t)\n\nGROUP BY t\n\nORDER BY t\n",
+                    "refId": "A",
+                    "round": "0s",
+                    "skip_comments": true,
+                    "table": "stats",
+                    "tableLoading": false
+                }
+            ],
+            "title": "Last Update",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "${ds}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [
+                        {
+                            "options": {
+                                "pattern": ".*Anwesend.*",
+                                "result": {
+                                    "color": "dark-green",
+                                    "index": 0
+                                }
+                            },
+                            "type": "regex"
+                        },
+                        {
+                            "options": {
+                                "pattern": ".*Niemand.*",
+                                "result": {
+                                    "color": "dark-red",
+                                    "index": 1
+                                }
+                            },
+                            "type": "regex"
+                        }
+                    ],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "text",
+                                "value": 0
+                            }
+                        ]
+                    },
+                    "unit": "string"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 2,
+                "w": 7,
+                "x": 17,
+                "y": 3
+            },
+            "id": 10,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "/^Message$/",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "value",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "database": "realraum",
+                    "datasource": {
+                        "type": "grafana-clickhouse-datasource",
+                        "uid": "${DS_R3STATS-CLICKHOUSE}"
+                    },
+                    "dateColDataType": "",
+                    "dateLoading": false,
+                    "dateTimeColDataType": "timestamp",
+                    "dateTimeType": "DATETIME64",
+                    "datetimeLoading": false,
+                    "editorType": "sql",
+                    "extrapolate": false,
+                    "format": 0,
+                    "intervalFactor": 1,
+                    "meta": {},
+                    "pluginVersion": "4.11.1",
+                    "queryType": "timeseries",
+                    "rawSql": "SELECT\n    timestamp as t,\n    any(JSONExtractString(json, 'message')) as `Message`\nFROM stats\n\nWHERE $__timeFilter(t)\n\nGROUP BY t\n\nORDER BY t\n",
+                    "refId": "A",
+                    "round": "0s",
+                    "skip_comments": true,
+                    "table": "stats",
+                    "tableLoading": false
+                }
+            ],
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "${ds}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "axisPlacement": "auto",
+                        "fillOpacity": 70,
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineWidth": 0,
+                        "spanNulls": false
+                    },
+                    "mappings": [
+                        {
+                            "options": {
+                                "Unknown": {
+                                    "color": "#808080",
+                                    "index": 2
+                                }
+                            },
+                            "type": "value"
+                        },
+                        {
+                            "options": {
+                                "match": "true",
+                                "result": {
+                                    "color": "red",
+                                    "index": 0,
+                                    "text": "Closed"
+                                }
+                            },
+                            "type": "special"
+                        },
+                        {
+                            "options": {
+                                "match": "false",
+                                "result": {
+                                    "color": "green",
+                                    "index": 1,
+                                    "text": "Open"
+                                }
+                            },
+                            "type": "special"
+                        }
+                    ],
+                    "noValue": "Unknown",
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "text",
+                                "value": 0
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 5
+            },
+            "id": 13,
+            "options": {
+                "alignValue": "center",
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "mergeValues": true,
+                "rowHeight": 0.9,
+                "showValue": "auto",
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "database": "realraum",
+                    "datasource": {
+                        "type": "grafana-clickhouse-datasource",
+                        "uid": "${DS_R3STATS-CLICKHOUSE}"
+                    },
+                    "dateColDataType": "",
+                    "dateLoading": false,
+                    "dateTimeColDataType": "timestamp",
+                    "dateTimeType": "DATETIME64",
+                    "datetimeLoading": false,
+                    "editorType": "sql",
+                    "extrapolate": false,
+                    "format": 0,
+                    "intervalFactor": 1,
+                    "key": "Q-49d5c560-6998-4842-b3de-49134366295e-0",
+                    "meta": {},
+                    "pluginVersion": "4.11.1",
+                    "queryType": "timeseries",
+                    "rawSql": "SELECT\n  t,\n  description,\n  any(value) as Value\nFROM\n(\nSELECT\n    timestamp as t,\n    arrayJoin(any(door_contact)) as doors,\n    JSONExtractString(doors, 'description') as description,\n    JSONExtractBool(doors, 'value') as value\nFROM stats\nWHERE $__timeFilter(t)\nGROUP BY t\nORDER BY t\n)\nGROUP BY t, description\nORDER BY t",
+                    "refId": "A",
+                    "round": "0s",
+                    "skip_comments": true,
+                    "table": "stats",
+                    "tableLoading": false
+                }
+            ],
+            "title": "Door Contacts",
+            "transformations": [
+                {
+                    "id": "convertFieldType",
+                    "options": {
+                        "conversions": [
+                            {
+                                "destinationType": "boolean",
+                                "targetField": "Value"
+                            }
+                        ],
+                        "fields": {}
+                    }
+                }
+            ],
+            "type": "state-timeline"
+        },
+        {
+            "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "${ds}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "axisPlacement": "auto",
+                        "fillOpacity": 70,
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineWidth": 0,
+                        "spanNulls": false
+                    },
+                    "mappings": [
+                        {
+                            "options": {
+                                "Unknown": {
+                                    "color": "#808080",
+                                    "index": 2
+                                }
+                            },
+                            "type": "value"
+                        },
+                        {
+                            "options": {
+                                "match": "true",
+                                "result": {
+                                    "color": "red",
+                                    "index": 0,
+                                    "text": "Locked"
+                                }
+                            },
+                            "type": "special"
+                        },
+                        {
+                            "options": {
+                                "match": "false",
+                                "result": {
+                                    "color": "green",
+                                    "index": 1,
+                                    "text": "Unlocked"
+                                }
+                            },
+                            "type": "special"
+                        }
+                    ],
+                    "noValue": "Unknown",
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "text",
+                                "value": 0
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 10,
+                "w": 24,
+                "x": 0,
+                "y": 13
+            },
+            "id": 77,
+            "options": {
+                "alignValue": "center",
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "mergeValues": true,
+                "rowHeight": 0.9,
+                "showValue": "auto",
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "database": "realraum",
+                    "datasource": {
+                        "type": "grafana-clickhouse-datasource",
+                        "uid": "${DS_R3STATS-CLICKHOUSE}"
+                    },
+                    "dateColDataType": "",
+                    "dateLoading": false,
+                    "dateTimeColDataType": "timestamp",
+                    "dateTimeType": "DATETIME64",
+                    "datetimeLoading": false,
+                    "editorType": "sql",
+                    "extrapolate": false,
+                    "format": 0,
+                    "intervalFactor": 1,
+                    "key": "Q-49d5c560-6998-4842-b3de-49134366295e-0",
+                    "meta": {},
+                    "pluginVersion": "4.11.1",
+                    "queryType": "timeseries",
+                    "rawSql": "SELECT\n  t,\n  description,\n  any(value) as Value\nFROM\n(\nSELECT\n    timestamp as t,\n    arrayJoin(any(door_locked)) as doors,\n    JSONExtractString(doors, 'description') as description,\n    JSONExtractBool(doors, 'value') as value\nFROM stats\nWHERE $__timeFilter(t)\nGROUP BY t\nORDER BY t\n)\nGROUP BY t, description\nORDER BY t",
+                    "refId": "A",
+                    "round": "0s",
+                    "skip_comments": true,
+                    "table": "stats",
+                    "tableLoading": false
+                }
+            ],
+            "title": "Door Locks",
+            "transformations": [
+                {
+                    "id": "convertFieldType",
+                    "options": {
+                        "conversions": [
+                            {
+                                "destinationType": "boolean",
+                                "targetField": "Value"
+                            }
+                        ],
+                        "fields": {}
+                    }
+                }
+            ],
+            "type": "state-timeline"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 23
+            },
+            "id": 76,
+            "panels": [],
+            "title": "Environment Sensors",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "${ds}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "fieldMinMax": false,
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "dark-blue",
+                                "value": 0
+                            },
+                            {
+                                "color": "blue",
+                                "value": 14
+                            },
+                            {
+                                "color": "super-light-blue",
+                                "value": 16
+                            },
+                            {
+                                "color": "super-light-yellow",
+                                "value": 18
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 20
+                            },
+                            {
+                                "color": "super-light-orange",
+                                "value": 22
+                            },
+                            {
+                                "color": "orange",
+                                "value": 24
+                            },
+                            {
+                                "color": "dark-orange",
+                                "value": 26
+                            },
+                            {
+                                "color": "red",
+                                "value": 28
+                            },
+                            {
+                                "color": "dark-red",
+                                "value": 32
+                            }
+                        ]
+                    },
+                    "unit": "celsius"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 24,
+                "x": 0,
+                "y": 24
+            },
+            "id": 25,
+            "maxPerRow": 6,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "text": {},
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.1.0",
+            "repeat": "temperature_sensors",
+            "repeatDirection": "h",
+            "targets": [
+                {
+                    "database": "realraum",
+                    "datasource": {
+                        "type": "grafana-clickhouse-datasource",
+                        "uid": "${DS_R3STATS-CLICKHOUSE}"
+                    },
+                    "dateColDataType": "",
+                    "dateLoading": false,
+                    "dateTimeColDataType": "timestamp",
+                    "dateTimeType": "DATETIME64",
+                    "datetimeLoading": false,
+                    "editorType": "sql",
+                    "extrapolate": false,
+                    "format": 0,
+                    "hide": false,
+                    "intervalFactor": 1,
+                    "meta": {},
+                    "pluginVersion": "4.11.1",
+                    "queryType": "timeseries",
+                    "rawSql": "SELECT\n    t,\n    (arrayJoin(arrayZip(names, values)) as x).1 as name,\n    any(x.2) as Value\nFROM\n(\nSELECT\n    timestamp as t,\n    arrayMap(x -> JSONExtractString(x, 'name'), any(temperature)) as names,\n    arrayMap(x -> JSONExtractFloat(x, 'value'), any(temperature)) as values,\n    arrayMap(x -> JSONExtractString(x, 'timestamp'), any(temperature)) as timestamps,\n    arrayMap(x -> JSONExtractString(x, 'unit'), any(temperature)) as untis\nFROM stats\nWHERE $__timeFilter(t)\nGROUP BY t\nORDER BY t\n)\nWHERE name = '$temperature_sensors'\nGROUP BY t, name\nORDER BY t",
+                    "refId": "A",
+                    "round": "0s",
+                    "skip_comments": true,
+                    "table": "stats",
+                    "tableLoading": false
+                }
+            ],
+            "title": "$temperature_sensors",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "${ds}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": true,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "stepBefore",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "text",
+                                "value": 0
+                            }
+                        ]
+                    },
+                    "unit": "celsius"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 10,
+                "w": 8,
+                "x": 0,
+                "y": 28
+            },
+            "id": 20,
+            "options": {
+                "legend": {
+                    "calcs": [
+                        "min",
+                        "max",
+                        "mean"
+                    ],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "database": "realraum",
+                    "datasource": {
+                        "type": "grafana-clickhouse-datasource",
+                        "uid": "${DS_R3STATS-CLICKHOUSE}"
+                    },
+                    "dateColDataType": "",
+                    "dateLoading": false,
+                    "dateTimeColDataType": "timestamp",
+                    "dateTimeType": "DATETIME64",
+                    "datetimeLoading": false,
+                    "editorType": "sql",
+                    "extrapolate": false,
+                    "format": 0,
+                    "intervalFactor": 1,
+                    "meta": {},
+                    "pluginVersion": "4.11.1",
+                    "queryType": "timeseries",
+                    "rawSql": "SELECT\n    t,\n    (arrayJoin(arrayZip(names, values)) as x).1 as name,\n    any(x.2) as Value\nFROM\n(\nSELECT\n    timestamp as t,\n    arrayMap(x -> JSONExtractString(x, 'name'), any(temperature)) as names,\n    arrayMap(x -> JSONExtractFloat(x, 'value'), any(temperature)) as values,\n    arrayMap(x -> JSONExtractString(x, 'timestamp'), any(temperature)) as timestamps,\n    arrayMap(x -> JSONExtractString(x, 'unit'), any(temperature)) as untis\nFROM stats\nWHERE $__timeFilter(t)\nGROUP BY t\nORDER BY t\n)\nGROUP BY t, name\nORDER BY t",
+                    "refId": "A",
+                    "round": "0s",
+                    "skip_comments": true,
+                    "table": "stats",
+                    "tableLoading": false
+                }
+            ],
+            "title": "Temperatures",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "${ds}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": true,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "stepBefore",
+                        "lineStyle": {
+                            "fill": "solid"
+                        },
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "text",
+                                "value": 0
+                            }
+                        ]
+                    },
+                    "unit": "humidity"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 10,
+                "w": 8,
+                "x": 8,
+                "y": 28
+            },
+            "id": 78,
+            "options": {
+                "legend": {
+                    "calcs": [
+                        "min",
+                        "max",
+                        "mean"
+                    ],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "database": "realraum",
+                    "datasource": {
+                        "type": "grafana-clickhouse-datasource",
+                        "uid": "${DS_R3STATS-CLICKHOUSE}"
+                    },
+                    "dateColDataType": "",
+                    "dateLoading": false,
+                    "dateTimeColDataType": "timestamp",
+                    "dateTimeType": "DATETIME64",
+                    "datetimeLoading": false,
+                    "editorType": "sql",
+                    "extrapolate": false,
+                    "format": 0,
+                    "intervalFactor": 1,
+                    "meta": {},
+                    "pluginVersion": "4.11.1",
+                    "queryType": "timeseries",
+                    "rawSql": "SELECT\n    t,\n    (arrayJoin(arrayZip(names, values)) as x).1 as name,\n    any(x.2) as Value\nFROM\n(\nSELECT\n    timestamp as t,\n    arrayMap(x -> JSONExtractString(x, 'name'), any(humidity)) as names,\n    arrayMap(x -> JSONExtractFloat(x, 'value'), any(humidity)) as values,\n    arrayMap(x -> JSONExtractString(x, 'timestamp'), any(humidity)) as timestamps,\n    arrayMap(x -> JSONExtractString(x, 'unit'), any(humidity)) as untis\nFROM stats\nWHERE $__timeFilter(t)\nGROUP BY t\nORDER BY t\n)\nGROUP BY t, name\nORDER BY t",
+                    "refId": "A",
+                    "round": "0s",
+                    "skip_comments": true,
+                    "table": "stats",
+                    "tableLoading": false
+                }
+            ],
+            "title": "Humidity",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "${ds}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": true,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "stepBefore",
+                        "lineStyle": {
+                            "fill": "solid"
+                        },
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "text",
+                                "value": 0
+                            }
+                        ]
+                    },
+                    "unit": "volt"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 10,
+                "w": 8,
+                "x": 16,
+                "y": 28
+            },
+            "id": 81,
+            "options": {
+                "legend": {
+                    "calcs": [
+                        "min",
+                        "max",
+                        "mean"
+                    ],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "database": "realraum",
+                    "datasource": {
+                        "type": "grafana-clickhouse-datasource",
+                        "uid": "${DS_R3STATS-CLICKHOUSE}"
+                    },
+                    "dateColDataType": "",
+                    "dateLoading": false,
+                    "dateTimeColDataType": "timestamp",
+                    "dateTimeType": "DATETIME64",
+                    "datetimeLoading": false,
+                    "editorType": "sql",
+                    "extrapolate": false,
+                    "format": 0,
+                    "intervalFactor": 1,
+                    "meta": {},
+                    "pluginVersion": "4.11.1",
+                    "queryType": "timeseries",
+                    "rawSql": "SELECT\n    t,\n    (arrayJoin(arrayZip(names, values)) as x).1 as name,\n    any(x.2) as Value\nFROM\n(\nSELECT\n    timestamp as t,\n    arrayMap(x -> JSONExtractString(x, 'name'), any(voltage)) as names,\n    arrayMap(x -> JSONExtractFloat(x, 'value'), any(voltage)) as values,\n    arrayMap(x -> JSONExtractString(x, 'timestamp'), any(voltage)) as timestamps,\n    arrayMap(x -> JSONExtractString(x, 'unit'), any(voltage)) as untis\nFROM stats\nWHERE $__timeFilter(t)\nGROUP BY t\nORDER BY t\n)\nGROUP BY t, name\nORDER BY t",
+                    "refId": "A",
+                    "round": "0s",
+                    "skip_comments": true,
+                    "table": "stats",
+                    "tableLoading": false
+                }
+            ],
+            "title": "Voltages",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "${ds}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": true,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "stepBefore",
+                        "lineStyle": {
+                            "fill": "solid"
+                        },
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "text",
+                                "value": 0
+                            }
+                        ]
+                    },
+                    "unit": "pressurehpa"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 0,
+                "y": 38
+            },
+            "id": 79,
+            "options": {
+                "legend": {
+                    "calcs": [
+                        "min",
+                        "max",
+                        "mean"
+                    ],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "database": "realraum",
+                    "datasource": {
+                        "type": "grafana-clickhouse-datasource",
+                        "uid": "${DS_R3STATS-CLICKHOUSE}"
+                    },
+                    "dateColDataType": "",
+                    "dateLoading": false,
+                    "dateTimeColDataType": "timestamp",
+                    "dateTimeType": "DATETIME64",
+                    "datetimeLoading": false,
+                    "editorType": "sql",
+                    "extrapolate": false,
+                    "format": 0,
+                    "intervalFactor": 1,
+                    "meta": {},
+                    "pluginVersion": "4.11.1",
+                    "queryType": "timeseries",
+                    "rawSql": "SELECT\n    t,\n    (arrayJoin(arrayZip(names, values)) as x).1 as name,\n    any(x.2) as Value\nFROM\n(\nSELECT\n    timestamp as t,\n    arrayMap(x -> JSONExtractString(x, 'name'), any(barometer)) as names,\n    arrayMap(x -> JSONExtractFloat(x, 'value'), any(barometer)) as values,\n    arrayMap(x -> JSONExtractString(x, 'timestamp'), any(barometer)) as timestamps,\n    arrayMap(x -> JSONExtractString(x, 'unit'), any(barometer)) as untis\nFROM stats\nWHERE $__timeFilter(t)\nGROUP BY t\nORDER BY t\n)\nGROUP BY t, name\nORDER BY t",
+                    "refId": "A",
+                    "round": "0s",
+                    "skip_comments": true,
+                    "table": "stats",
+                    "tableLoading": false
+                }
+            ],
+            "title": "Barometer",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "grafana-clickhouse-datasource",
+                "uid": "${ds}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": true,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "stepBefore",
+                        "lineStyle": {
+                            "fill": "solid"
+                        },
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "text",
+                                "value": 0
+                            }
+                        ]
+                    },
+                    "unit": "percentunit"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 12,
+                "y": 38
+            },
+            "id": 80,
+            "options": {
+                "legend": {
+                    "calcs": [
+                        "min",
+                        "max",
+                        "mean"
+                    ],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "database": "realraum",
+                    "datasource": {
+                        "type": "grafana-clickhouse-datasource",
+                        "uid": "${DS_R3STATS-CLICKHOUSE}"
+                    },
+                    "dateColDataType": "",
+                    "dateLoading": false,
+                    "dateTimeColDataType": "timestamp",
+                    "dateTimeType": "DATETIME64",
+                    "datetimeLoading": false,
+                    "editorType": "sql",
+                    "extrapolate": false,
+                    "format": 0,
+                    "intervalFactor": 1,
+                    "meta": {},
+                    "pluginVersion": "4.11.1",
+                    "queryType": "timeseries",
+                    "rawSql": "SELECT\n    t,\n    (arrayJoin(arrayZip(names, values)) as x).1 as name,\n    any(x.2) as Value\nFROM\n(\nSELECT\n    timestamp as t,\n    arrayMap(x -> JSONExtractString(x, 'name'), any(illumination)) as names,\n    arrayMap(x -> JSONExtractFloat(x, 'value'), any(illumination)) as values,\n    arrayMap(x -> JSONExtractString(x, 'timestamp'), any(illumination)) as timestamps,\n    arrayMap(x -> JSONExtractString(x, 'unit'), any(illumination)) as untis\nFROM stats\nWHERE $__timeFilter(t)\nGROUP BY t\nORDER BY t\n)\nGROUP BY t, name\nORDER BY t",
+                    "refId": "A",
+                    "round": "0s",
+                    "skip_comments": true,
+                    "table": "stats",
+                    "tableLoading": false
+                }
+            ],
+            "title": "Illumination",
+            "type": "timeseries"
+        }
+    ],
+    "refresh": "5s",
+    "schemaVersion": 41,
+    "tags": [],
+    "templating": {
+        "list": [
+            {
+                "current": {},
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "${ds}"
+                },
+                "definition": "SELECT\n  description\nFROM\n(\nSELECT\n    arrayJoin(argMax(door_contact, timestamp)) as doors,\n    JSONExtractString(doors, 'description') as description,\n    JSONExtractBool(doors, 'value') as value\nFROM stats\n)\nGROUP BY description",
+                "description": "Select Doors",
+                "includeAll": true,
+                "label": "Türkontakt",
+                "multi": true,
+                "name": "door_contact",
+                "options": [],
+                "query": "SELECT\n  description\nFROM\n(\nSELECT\n    arrayJoin(argMax(door_contact, timestamp)) as doors,\n    JSONExtractString(doors, 'description') as description,\n    JSONExtractBool(doors, 'value') as value\nFROM stats\n)\nGROUP BY description",
+                "refresh": 1,
+                "regex": "",
+                "sort": 1,
+                "type": "query"
+            },
+            {
+                "current": {},
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "${DS_R3STATS-CLICKHOUSE}"
+                },
+                "definition": "SELECT\n  description\nFROM\n(\nSELECT\n    arrayJoin(argMax(door_locked, timestamp)) as doors,\n    JSONExtractString(doors, 'description') as description,\n    JSONExtractBool(doors, 'value') as value\nFROM stats\n)\nGROUP BY description",
+                "description": "Select Doors",
+                "includeAll": true,
+                "label": "Türschloss",
+                "multi": true,
+                "name": "door_locked",
+                "options": [],
+                "query": "SELECT\n  description\nFROM\n(\nSELECT\n    arrayJoin(argMax(door_locked, timestamp)) as doors,\n    JSONExtractString(doors, 'description') as description,\n    JSONExtractBool(doors, 'value') as value\nFROM stats\n)\nGROUP BY description",
+                "refresh": 1,
+                "regex": "",
+                "sort": 1,
+                "type": "query"
+            },
+            {
+                "allowCustomValue": false,
+                "current": {},
+                "datasource": {
+                    "type": "grafana-clickhouse-datasource",
+                    "uid": "${ds}"
+                },
+                "definition": "SELECT\n  arrayJoin(arrayMap(x -> JSONExtractString(x, 'name'), any(temperature))) as names\nFROM stats",
+                "hide": 2,
+                "includeAll": true,
+                "name": "temperature_sensors",
+                "options": [],
+                "query": "SELECT\n  arrayJoin(arrayMap(x -> JSONExtractString(x, 'name'), any(temperature))) as names\nFROM stats",
+                "refresh": 1,
+                "regex": "",
+                "type": "query"
+            },
+            {
+                "allowCustomValue": false,
+                "current": {},
+                "hide": 2,
+                "name": "ds",
+                "options": [],
+                "query": "grafana-clickhouse-datasource",
+                "refresh": 1,
+                "regex": "",
+                "type": "datasource"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-1h",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "Europe/Vienna",
+    "title": "Realraum",
+    "uid": "df1o2er70j8xse",
+    "version": 45,
+    "weekStart": "monday"
+}
